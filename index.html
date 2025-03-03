@@ -1,16 +1,437 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Netlify Test Site</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Value Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* Mobile-responsive adjustments */
+        @media (max-width: 768px) {
+            .time-tracker {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .activity {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .summary {
+                padding: 10px;
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+        
+        .time-tracker {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .time-tracker th, .time-tracker td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .time-tracker th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .per-hour-row {
+            background-color: #e6f2ff;
+            font-weight: bold;
+        }
+        
+        .per-hour-cell {
+            background-color: #00008B;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .examples-row {
+            background-color: #ddd;
+        }
+        
+        .activity {
+            cursor: pointer;
+            padding: 5px;
+            margin: 2px 0;
+            transition: background-color 0.2s;
+        }
+        
+        .activity:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .summary {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .today-activities {
+            margin-top: 20px;
+        }
+        
+        .today-activities h3 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .remove-btn {
+            color: red;
+            cursor: pointer;
+        }
+        
+        .total-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Hello, Netlify!</h1>
-        <p>This is my test website deployed on Netlify.</p>
-        <button id="clickButton">Click Me!</button>
-        <p id="clickCount">Button clicks: 0</p>
+        <h1>Time Value Tracker</h1>
+        
+        <table class="time-tracker">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>₹2,000.00</th>
+                    <th>₹0.00</th>
+                    <th>₹200.00</th>
+                    <th>₹2,000.00</th>
+                    <th>₹20,000.00</th>
+                    <th>₹200,000.00</th>
+                    <th>₹2,000,000.00</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="per-hour-row">
+                    <td class="per-hour-cell">Per hour</td>
+                    <td>-₹2,000.00</td>
+                    <td>₹0.00</td>
+                    <td>₹200.00</td>
+                    <td>₹2,000.00</td>
+                    <td>₹20,000.00</td>
+                    <td>₹200,000.00</td>
+                    <td>₹2,000,000.00</td>
+                </tr>
+                <tr class="examples-row">
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                    <td>Examples</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="activity" data-value="-2000">Drinking Alcohol</div>
+                        <div class="activity" data-value="-2000">Eating Fast food</div>
+                        <div class="activity" data-value="-2000">Hanging out with negative people</div>
+                        <div class="activity" data-value="-2000">Worrying what people think of you</div>
+                        <div class="activity" data-value="-2000">Avoiding problems that need fixing</div>
+                        <div class="activity" data-value="-2000">Breaking promises & letting people down</div>
+                        <div class="activity" data-value="-2000">Avoiding problems that need fixing</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="0">Watching Netflix</div>
+                        <div class="activity" data-value="0">Checking Facebook & Instagram</div>
+                        <div class="activity" data-value="0">Watching YouTube videos</div>
+                        <div class="activity" data-value="0">Playing video games</div>
+                        <div class="activity" data-value="0">Following other peoples lives</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="200">Running errands</div>
+                        <div class="activity" data-value="200">Buying groceries or trips to any store</div>
+                        <div class="activity" data-value="200">Cooking meals, cleaning, doing dishes</div>
+                        <div class="activity" data-value="200">Attending meetings or phone calls</div>
+                        <div class="activity" data-value="200">Moving lawn, household maintenance</div>
+                        <div class="activity" data-value="200">Replying to emails and social messages</div>
+                        <div class="activity" data-value="200">Customer support</div>
+                        <div class="activity" data-value="200">Answering your phone and txts</div>
+                        <div class="activity" data-value="200">Editing your website</div>
+                        <div class="activity" data-value="200">Spelling everything perfectly</div>
+                        <div class="activity" data-value="200">Cold calling & following up</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="2000">Solving a problem for a client</div>
+                        <div class="activity" data-value="2000">Talking to a qualified prospect</div>
+                        <div class="activity" data-value="2000">Writing emails to prospects or clients</div>
+                        <div class="activity" data-value="2000">Managing PPC campaigns</div>
+                        <div class="activity" data-value="2000">Outsourcing simple tasks</div>
+                        <div class="activity" data-value="2000">Creating best practice documents</div>
+                        <div class="activity" data-value="2000">Posting content on social media</div>
+                        <div class="activity" data-value="2000">Reading books & taking courses</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="20000">Planning and organizing your day</div>
+                        <div class="activity" data-value="20000">Negotiating with a hot prospect</div>
+                        <div class="activity" data-value="20000">Building sales funnels, webinars etc.</div>
+                        <div class="activity" data-value="20000">Delegating complex tasks</div>
+                        <div class="activity" data-value="20000">Writing ad copy or sales copy</div>
+                        <div class="activity" data-value="20000">Creating PPC campaigns</div>
+                        <div class="activity" data-value="20000">Creating & judging tests & experiments</div>
+                        <div class="activity" data-value="20000">Building and testing systems/machines</div>
+                        <div class="activity" data-value="20000">Exercise, sleep & relaxation</div>
+                        <div class="activity" data-value="20000">Hanging out with smart people</div>
+                        <div class="activity" data-value="20000">Meditation</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="200000">Creating & improving your products</div>
+                        <div class="activity" data-value="200000">Creating & improving your offers</div>
+                        <div class="activity" data-value="200000">Improving your value proposition</div>
+                        <div class="activity" data-value="200000">Negotiating major deals</div>
+                        <div class="activity" data-value="200000">Hiring & firing team members</div>
+                        <div class="activity" data-value="200000">Estalishing values & culture</div>
+                        <div class="activity" data-value="200000">Selling to qualified groups</div>
+                        <div class="activity" data-value="200000">Public speaking to qualified crowds</div>
+                        <div class="activity" data-value="200000">Cutting costs</div>
+                        <div class="activity" data-value="200000">Reflection & honest self analysis</div>
+                        <div class="activity" data-value="200000">Fixing repeating problems & errors</div>
+                    </td>
+                    <td>
+                        <div class="activity" data-value="2000000">Capital allocation decisions</div>
+                        <div class="activity" data-value="2000000">Salary & incentive decisions</div>
+                        <div class="activity" data-value="2000000">Restructuring decisions</div>
+                        <div class="activity" data-value="2000000">Establishing long term partnerships</div>
+                        <div class="activity" data-value="2000000">Setting long term strategy/direction</div>
+                        <div class="activity" data-value="2000000">Architecting systems & machines</div>
+                        <div class="activity" data-value="2000000">Radical innovation</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <h2>Today's Activities</h2>
+            <p>Click on activities above to add them to your tracker (each click adds 30 minutes)</p>
+            
+            <div class="today-activities">
+                <h3>Activities for <span id="today-date"></span></h3>
+                <div class="activity-list" id="activity-list">
+                    <!-- Activities will be added here -->
+                </div>
+                <div class="total-value">
+                    Total time: <span id="total-time">0</span> minutes
+                </div>
+                <div class="total-value">
+                    Total value: ₹<span id="total-value">0</span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button id="reset-button" style="background-color: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                        Reset All Activities
+                    </button>
+                    <button id="export-button" style="background-color: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // Set today's date
+        const todayDate = new Date().toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('today-date').textContent = todayDate;
+        
+        // Load saved activities from localStorage
+        const loadActivities = () => {
+            const savedActivities = localStorage.getItem('timeTrackerActivities');
+            return savedActivities ? JSON.parse(savedActivities) : [];
+        };
+        
+        // Save activities to localStorage
+        const saveActivities = () => {
+            localStorage.setItem('timeTrackerActivities', JSON.stringify(activities));
+        };
+        
+        // Track activities
+        const activities = loadActivities();
+        let totalTime = activities.reduce((sum, activity) => sum + activity.time, 0);
+        let totalValue = activities.reduce((sum, activity) => sum + activity.value, 0);
+        
+        // Add event listeners to all activities
+        document.querySelectorAll('.activity').forEach(activity => {
+            activity.addEventListener('click', function() {
+                const activityText = this.textContent;
+                const activityValue = parseFloat(this.getAttribute('data-value'));
+                
+                // Add 30 minutes of this activity
+                addActivity(activityText, activityValue);
+                updateSummary();
+            });
+        });
+        
+        function addActivity(text, value) {
+            const timeValue = value * (30/60); // Value per 30 minutes (converting to hourly rate)
+            
+            activities.push({
+                text: text,
+                time: 30, // 30 minutes
+                value: timeValue
+            });
+            
+            totalTime += 30;
+            totalValue += timeValue;
+            
+            // Create new activity item
+            const activityList = document.getElementById('activity-list');
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <span>${text} (30 min)</span>
+                <span>₹${timeValue.toFixed(2)} <span class="remove-btn" data-index="${activities.length - 1}">✕</span></span>
+            `;
+            activityList.appendChild(activityItem);
+            
+            // Add remove event listener
+            activityItem.querySelector('.remove-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const index = parseInt(this.getAttribute('data-index'));
+                removeActivity(index);
+            });
+        }
+        
+        function removeActivity(index) {
+            if (index >= 0 && index < activities.length) {
+                const activity = activities[index];
+                
+                // Update totals
+                totalTime -= activity.time;
+                totalValue -= activity.value;
+                
+                // Remove from array
+                activities.splice(index, 1);
+                
+                // Update UI
+                updateSummary();
+                refreshActivityList();
+            }
+        }
+        
+        function refreshActivityList() {
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+            
+            activities.forEach((activity, index) => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <span>${activity.text} (${activity.time} min)</span>
+                    <span>₹${activity.value.toFixed(2)} <span class="remove-btn" data-index="${index}">✕</span></span>
+                `;
+                activityList.appendChild(activityItem);
+                
+                // Add remove event listener
+                activityItem.querySelector('.remove-btn').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeActivity(index);
+                });
+            });
+        }
+        
+        function updateSummary() {
+            document.getElementById('total-time').textContent = totalTime;
+            document.getElementById('total-value').textContent = totalValue.toFixed(2);
+            saveActivities();
+        }
+        
+        // Initialize the activity list on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshActivityList();
+            updateSummary();
+            
+            // Add event listeners for the reset and export buttons
+            document.getElementById('reset-button').addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all activities? This cannot be undone.')) {
+                    activities.length = 0;
+                    totalTime = 0;
+                    totalValue = 0;
+                    refreshActivityList();
+                    updateSummary();
+                }
+            });
+            
+            document.getElementById('export-button').addEventListener('click', function() {
+                // Create CSV content
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Activity,Time (min),Value (₹)\n";
+                
+                activities.forEach(activity => {
+                    csvContent += `"${activity.text}",${activity.time},${activity.value.toFixed(2)}\n`;
+                });
+                
+                // Add totals
+                csvContent += `\nTOTAL,${totalTime},${totalValue.toFixed(2)}\n`;
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `time-value-tracker-${todayDate.replace(/,/g, '')}.csv`);
+                document.body.appendChild(link);
+                
+                // Trigger download
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    </script>
 </body>
 </html>
